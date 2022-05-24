@@ -1,0 +1,129 @@
+--------------------------------------------------MainActivity.java--------------------------------------------------
+
+package com.bignerdranch.android.penguincoders;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+public class MainActivity extends AppCompatActivity {
+
+    private WebView webView; //
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        CustomWebViewClient client = new CustomWebViewClient(this); //custom client (CustomWebViewClient)
+        webView = findViewById(R.id.webView); //default...
+        webView.setWebViewClient(client); //set webView client & open in same app | else opens in external browser
+        webView.getSettings().setJavaScriptEnabled(true); // enable JS
+        //webView.setWebChromeClient(new WebChromeClient()); //use chrome client if needed & enable hardware acceleration andoroidManifest.xml
+
+        //use any url -
+        // local host(use "http://192.168.1.5:8000/") or
+        // webpage("https://github.com/Arjun28/") or
+        // local html file("file:///android_asset/index.html") | In dir - app/src/main/  choose assets. then copy paste .html file into app/src/main/assets
+        webView.loadUrl("file:///android_asset/homepage.html");
+    }
+
+    //Go Back Button function
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if(keyCode == KeyEvent.KEYCODE_BACK && this.webView.canGoBack()){
+            this.webView.goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+}
+
+//handle link clicks within same webview
+class CustomWebViewClient extends WebViewClient{
+    private Activity activity;
+
+    public CustomWebViewClient(Activity activity) {
+        this.activity = activity;
+    }
+    //API level < 24
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView webView, String url){
+        return false;
+    }
+    //API level >=24
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView webView, WebResourceRequest request){
+        return false;
+    }
+
+}
+
+
+
+
+}
+
+
+
+
+--------------------------------------------------activity_main.xml--------------------------------------------------
+
+<?xml version="1.0" encoding="utf-8"?>
+<!--default xml codes is replaced by below code-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+--------------------------------------------------AndroidManifest.xml--------------------------------------------------
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bignerdranch.android.penguincoders">
+
+    <uses-permission android:name="android.permission.INTERNET"/>  <!--Tell android to use Internet-->
+    <!--also add below - android:usesCleartextTraffic="true" , android:hardwareAccelerated="true" -->
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="true"
+        android:theme="@style/Theme.PenguinCoders">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
